@@ -2,14 +2,33 @@ import { useContext } from "react";
 import { ExpenseContext } from "./Context";
 
 const MainStats = () => {
-  
-  
-  const {expenses} = useContext(ExpenseContext);
+  const { expenses } = useContext(ExpenseContext);
 
+  const BUDGET_LIMIT = 4000;
+  const totalSpent = expenses.reduce((total, expense) => total + expense.amount, 0);
+  const remaining = BUDGET_LIMIT - totalSpent;
+  const spentPercentage = totalSpent / BUDGET_LIMIT * 100;
+  const isOverBudget = remaining < 0;
+
+  const getProgressBarColor = () => {
+    if (spentPercentage >= 100) return "bg-[#DC2626]";
+    if (spentPercentage >= 80) return "bg-[#F59E0B]";
+    return "bg-[#16A34A]";
+  };
+
+  const getStatusMessage = () => {
+    if (spentPercentage >= 100) return "Over budget!";
+    if (spentPercentage >= 80) return "Approaching limit";
+    return "Healthy spending pace";
+  };
+
+  const getStatusColor = () => {
+    if (spentPercentage >= 100) return "bg-[#DC2626]";
+    if (spentPercentage >= 80) return "bg-[#F59E0B]";
+    return "bg-[#16A34A]";
+  };
 
   return (
-  
-    
     <>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
@@ -45,7 +64,7 @@ const MainStats = () => {
               className="text-3xl font-extrabold font-mono text-[#111827] tracking-tight"
               id="totalExpenseDisplay"
             >
-              $ {expenses.reduce((total, expense) => total + expense.amount, 0).toFixed(2)}
+              $ {totalSpent.toFixed(2)}
             </div>
           </div>
 
@@ -129,7 +148,7 @@ const MainStats = () => {
               </span>
 
               <h3 className="text-xl font-bold text-[#111827] mt-0.5">
-                $4,000.00 Limit
+                ${BUDGET_LIMIT.toFixed(2)} Limit
               </h3>
             </div>
 
@@ -139,33 +158,33 @@ const MainStats = () => {
               </span>
 
               <p
-                className="text-lg font-bold font-mono text-[#16A34A]"
+                className={`text-lg font-bold font-mono ${isOverBudget ? "text-[#DC2626]" : "text-[#16A34A]"}`}
                 id="budgetRemainingDisplay"
               >
-                ${(4000 - expenses.reduce((total, expense) => total + expense.amount, 0)).toFixed(2)}
+                ${remaining.toFixed(2)}
               </p>
             </div>
           </div>
 
           <div className="my-4">
             <div className="flex items-center justify-between text-xs font-medium text-[#111827] mb-1.5">
-              <span>Spent: 71.1%</span>
-              <span>Limit: $4,000.00</span>
+              <span>Spent: {spentPercentage.toFixed(1)}%</span>
+              <span>Limit: ${BUDGET_LIMIT.toFixed(2)}</span>
             </div>
 
             <div className="w-full bg-white/70 h-3 rounded-full overflow-hidden p-0.5 border border-[#111827]/10">
               <div
                 id="budgetProgressBar"
-                className="bg-[#111827] h-full rounded-full transition-all duration-500"
-                style={{ width: `${(expenses.reduce((total, expense) => total + expense.amount, 0) / 4000 * 100).toFixed(1)}%` }}
+                className={`${getProgressBarColor()} h-full rounded-full transition-all duration-500`}
+                style={{ width: `${Math.min(spentPercentage, 100).toFixed(1)}%` }}
               ></div>
             </div>
           </div>
 
           <div className="flex items-center justify-between text-xs text-[#6B7280] pt-2 border-t border-[#111827]/10">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#16A34A]"></span>
-              Healthy spending pace
+              <span className={`w-2 h-2 rounded-full ${getStatusColor()}`}></span>
+              {getStatusMessage()}
             </span>
 
             <span className="font-medium">

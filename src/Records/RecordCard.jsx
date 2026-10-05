@@ -1,20 +1,69 @@
 import React, { useContext } from "react";
 import { ExpenseContext } from "../Context";
+import { toast } from "react-toastify";
 
 const RecordCard = ({ expense }) => {
 
   const {
     setIsExpenseModalOpen,
-    setEditExpense
+    setEditExpense,
+    setExpenses
   } = useContext(ExpenseContext);
 
 
   const handleEditClick = () => {
-
     setEditExpense(expense);
-
-    setIsExpenseModalOpen(true);
   };
+
+
+  const handleDeleteClick = () => {
+    if (!window.confirm("Are you sure you want to delete this expense?")) {
+      return;
+    }
+
+    setExpenses((prevExpenses) =>
+      prevExpenses.filter((item) => item.id !== expense.id)
+    );
+    toast.success("Expense deleted successfully!");
+  };
+
+
+  const categoryStyles = {
+    Food: {
+      iconBg: "bg-[#FAD4C0]/40 border border-[#FAD4C0]",
+      badge: "bg-[#FAD4C0]/40 text-[#111827] border border-[#FAD4C0]"
+    },
+    Rent: {
+      iconBg: "bg-[#80A1C1]/20 border border-[#80A1C1]/40",
+      badge: "bg-[#80A1C1]/20 text-[#111827] border border-[#80A1C1]/40"
+    },
+    Entertainment: {
+      iconBg: "bg-purple-100 border border-purple-200",
+      badge: "bg-purple-100 text-purple-900 border border-purple-200"
+    },
+    Medical: {
+      iconBg: "bg-red-50 border border-red-200",
+      badge: "bg-red-50 text-[#DC2626] border border-red-200"
+    },
+    Utilities: {
+      iconBg: "bg-amber-50 border border-amber-200",
+      badge: "bg-amber-50 text-[#D97706] border border-amber-200"
+    },
+    Shopping: {
+      iconBg: "bg-emerald-50 border border-emerald-200",
+      badge: "bg-emerald-50 text-[#16A34A] border border-emerald-200"
+    },
+    Education: {
+      iconBg: "bg-indigo-50 border border-indigo-200",
+      badge: "bg-indigo-50 text-indigo-900 border border-indigo-200"
+    },
+    Other: {
+      iconBg: "bg-gray-100 border border-gray-200",
+      badge: "bg-gray-100 text-gray-700 border border-gray-200"
+    }
+  };
+
+  const styles = categoryStyles[expense.category] || categoryStyles.Other;
 
 
   return (
@@ -27,7 +76,7 @@ const RecordCard = ({ expense }) => {
 
         <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
 
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-xl shrink-0">
+          <div className={`w-12 h-12 rounded-2xl ${styles.iconBg} flex items-center justify-center text-xl shrink-0`}>
 
             {expense.icon}
 
@@ -45,7 +94,7 @@ const RecordCard = ({ expense }) => {
               </h4>
 
 
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-[#16A34A] border border-emerald-200">
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${styles.badge}`}>
 
                 {expense.category}
 
@@ -144,6 +193,8 @@ const RecordCard = ({ expense }) => {
             {/* Delete */}
 
             <button
+
+              onClick={handleDeleteClick}
 
               title="Delete Expense"
 

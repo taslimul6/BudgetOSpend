@@ -1,12 +1,13 @@
 import Logo from './assets/logo.svg';
+import { useContext } from 'react';
+import { ExpenseContext } from './Context';
 
-const Navbar = ({setIsExpenseModalOpen}) => {
+const Navbar = ({ setIsExpenseModalOpen }) => {
+  const { searchQuery, setSearchQuery } = useContext(ExpenseContext);
+
   return (
-
     <header className="sticky top-0 z-30 bg-[#FFF5E6]/90 backdrop-blur-md border-b border-[#111827]/10 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-
-        {/* <!-- Brand / Logo --> */}
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-[#111827] flex items-center justify-center shadow-sm p-1.5">
             <img src={Logo} alt="BentoSpend Logo" className="w-full h-full object-contain" />
@@ -20,13 +21,14 @@ const Navbar = ({setIsExpenseModalOpen}) => {
           </div>
         </div>
 
-        {/* <!-- Quick Search Bar in Header --> */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-6">
           <div className="relative w-full">
             <input
               type="text"
               id="headerSearchInput"
               placeholder="Search expenses by title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#111827]/15 rounded-xl text-sm text-[#111827] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#80A1C1] focus:border-transparent transition-all shadow-sm"
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#6B7280]">
@@ -34,19 +36,22 @@ const Navbar = ({setIsExpenseModalOpen}) => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <button id="clearHeaderSearch" className="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-[#6B7280] hover:text-[#111827]">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            {searchQuery && (
+              <button
+                id="clearHeaderSearch"
+                onClick={() => setSearchQuery("")}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#6B7280] hover:text-[#111827]"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* <!-- Header Action Controls --> */}
         <div className="flex items-center gap-3">
-          {/* <!-- Add Expense CTA Button --> */}
           <a
-
             onClick={() => setIsExpenseModalOpen(true)}
             id="openAddModalBtn"
             className="flex items-center gap-2 bg-[#FAD4C0] hover:bg-[#f5c0a7] active:scale-[0.98] text-[#111827] px-4 sm:px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 shadow-sm border border-[#111827]/10 cursor-pointer"
@@ -57,19 +62,14 @@ const Navbar = ({setIsExpenseModalOpen}) => {
             <span>Add Expense</span>
           </a>
 
-          {/* <!-- User Profile Pill --> */}
           <div className="flex items-center gap-2 pl-2 border-l border-[#111827]/10">
             <div className="w-9 h-9 rounded-xl bg-[#80A1C1] flex items-center justify-center font-bold text-white text-sm shadow-sm">
               LWS
             </div>
           </div>
-
-
         </div>
-
       </div>
     </header>
-
   );
 };
 

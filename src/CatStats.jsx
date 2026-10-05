@@ -1,6 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ExpenseContext } from "./Context";
 
 const CatStats = () => {
+    const { expenses } = useContext(ExpenseContext);
+
+    const categoryTotals = expenses.reduce((acc, expense) => {
+        acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+        return acc;
+    }, {});
+
+    const categories = [
+        { key: "Food", label: "Food", icon: "🍱" },
+        { key: "Rent", label: "Rent", icon: "🏠" },
+        { key: "Entertainment", label: "Entertainment", icon: "🎬" },
+        { key: "Medical", label: "Medical", icon: "💊" },
+        { key: "Utilities", label: "Utilities", icon: "⚡" },
+        { key: "Shopping", label: "Shopping", icon: "🛍️" },
+    ];
+
     return (
         <section className="bg-white rounded-3xl p-6 border border-[#111827]/10 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
@@ -24,83 +41,20 @@ const CatStats = () => {
                 className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3"
                 id="categoryOverviewGrid"
             >
-                <div className="p-3 bg-[#FFF5E6] rounded-2xl border border-[#111827]/5 flex flex-col justify-between">
-                    <span className="text-xs text-[#6B7280] font-medium">
-                        🍱 Food
-                    </span>
+                {categories.map((cat) => (
+                    <div key={cat.key} className="p-3 bg-[#FFF5E6] rounded-2xl border border-[#111827]/5 flex flex-col justify-between">
+                        <span className="text-xs text-[#6B7280] font-medium">
+                            {cat.icon} {cat.label}
+                        </span>
 
-                    <span
-                        className="text-sm font-bold font-mono text-[#111827] mt-1"
-                        id="cat-food-total"
-                    >
-                        $420.00
-                    </span>
-                </div>
-
-                <div className="p-3 bg-[#FFF5E6] rounded-2xl border border-[#111827]/5 flex flex-col justify-between">
-                    <span className="text-xs text-[#6B7280] font-medium">
-                        🏠 Rent
-                    </span>
-
-                    <span
-                        className="text-sm font-bold font-mono text-[#111827] mt-1"
-                        id="cat-rent-total"
-                    >
-                        $1,200.00
-                    </span>
-                </div>
-
-                <div className="p-3 bg-[#FFF5E6] rounded-2xl border border-[#111827]/5 flex flex-col justify-between">
-                    <span className="text-xs text-[#6B7280] font-medium">
-                        🎬 Entertainment
-                    </span>
-
-                    <span
-                        className="text-sm font-bold font-mono text-[#111827] mt-1"
-                        id="cat-ent-total"
-                    >
-                        $150.00
-                    </span>
-                </div>
-
-                <div className="p-3 bg-[#FFF5E6] rounded-2xl border border-[#111827]/5 flex flex-col justify-between">
-                    <span className="text-xs text-[#6B7280] font-medium">
-                        💊 Medical
-                    </span>
-
-                    <span
-                        className="text-sm font-bold font-mono text-[#111827] mt-1"
-                        id="cat-med-total"
-                    >
-                        $375.00
-                    </span>
-                </div>
-
-                <div className="p-3 bg-[#FFF5E6] rounded-2xl border border-[#111827]/5 flex flex-col justify-between">
-                    <span className="text-xs text-[#6B7280] font-medium">
-                        ⚡ Utilities
-                    </span>
-
-                    <span
-                        className="text-sm font-bold font-mono text-[#111827] mt-1"
-                        id="cat-util-total"
-                    >
-                        $220.00
-                    </span>
-                </div>
-
-                <div className="p-3 bg-[#FFF5E6] rounded-2xl border border-[#111827]/5 flex flex-col justify-between">
-                    <span className="text-xs text-[#6B7280] font-medium">
-                        🛍️ Shopping
-                    </span>
-
-                    <span
-                        className="text-sm font-bold font-mono text-[#111827] mt-1"
-                        id="cat-shop-total"
-                    >
-                        $480.00
-                    </span>
-                </div>
+                        <span
+                            className="text-sm font-bold font-mono text-[#111827] mt-1"
+                            id={`cat-${cat.key.toLowerCase()}-total`}
+                        >
+                            ${(categoryTotals[cat.key] || 0).toFixed(2)}
+                        </span>
+                    </div>
+                ))}
             </div>
         </section>
     );
