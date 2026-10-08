@@ -1,233 +1,149 @@
-import React, { useContext } from "react";
-import { ExpenseContext } from "../Context";
+import { useState } from "react";
+import { AnimatePresence, m } from "framer-motion";
 import { toast } from "react-toastify";
+import { useExpenses } from "../Context";
+import { getCategory } from "../constants/categories";
+import { formatDate } from "../utils/date";
+import { formatMoney } from "../utils/format";
+import ConfirmDialog from "../Components/ConfirmDialog";
+import { CalendarIcon, PencilIcon, RepeatIcon, TrashIcon } from "../Components/Icons";
+
+const UndoToast = ({ message, onUndo, closeToast }) => (
+  <div className="flex items-center justify-between gap-3">
+    <span>{message}</span>
+    <button
+      type="button"
+      onClick={() => {
+        onUndo();
+        closeToast?.();
+      }}
+      className="font-bold underline underline-offset-2 cursor-pointer"
+    >
+      Undo
+    </button>
+  </div>
+);
 
 const RecordCard = ({ expense }) => {
+  const { openModalForEdit, deleteExpense, restoreExpense, settings } = useExpenses();
+  const [confirming, setConfirming] = useState(false);
 
-  const {
-    setIsExpenseModalOpen,
-    setEditExpense,
-    setExpenses
-  } = useContext(ExpenseContext);
+  const category = getCategory(expense.category);
+  const isIncome = expense.type === "income";
 
-
-  const handleEditClick = () => {
-    setEditExpense(expense);
-  };
-
-
-  const handleDeleteClick = () => {
-    if (!window.confirm("Are you sure you want to delete this expense?")) {
-      return;
-    }
-
-    setExpenses((prevExpenses) =>
-      prevExpenses.filter((item) => item.id !== expense.id)
+  const handleConfirmDelete = () => {
+    setConfirming(false);
+    deleteExpense(expense.id);
+    toast(
+      ({ closeToast }) => (
+        <UndoToast
+          message="Transaction deleted."
+          onUndo={() => restoreExpense(expense)}
+          closeToast={closeToast}
+        />
+      ),
+      { autoClose: 6000 }
     );
-    toast.success("Expense deleted successfully!");
   };
-
-
-  const categoryStyles = {
-    Food: {
-      iconBg: "bg-[#FAD4C0]/40 border border-[#FAD4C0]",
-      badge: "bg-[#FAD4C0]/40 text-[#111827] border border-[#FAD4C0]"
-    },
-    Rent: {
-      iconBg: "bg-[#80A1C1]/20 border border-[#80A1C1]/40",
-      badge: "bg-[#80A1C1]/20 text-[#111827] border border-[#80A1C1]/40"
-    },
-    Entertainment: {
-      iconBg: "bg-purple-100 border border-purple-200",
-      badge: "bg-purple-100 text-purple-900 border border-purple-200"
-    },
-    Medical: {
-      iconBg: "bg-red-50 border border-red-200",
-      badge: "bg-red-50 text-[#DC2626] border border-red-200"
-    },
-    Utilities: {
-      iconBg: "bg-amber-50 border border-amber-200",
-      badge: "bg-amber-50 text-[#D97706] border border-amber-200"
-    },
-    Shopping: {
-      iconBg: "bg-emerald-50 border border-emerald-200",
-      badge: "bg-emerald-50 text-[#16A34A] border border-emerald-200"
-    },
-    Education: {
-      iconBg: "bg-indigo-50 border border-indigo-200",
-      badge: "bg-indigo-50 text-indigo-900 border border-indigo-200"
-    },
-    Other: {
-      iconBg: "bg-gray-100 border border-gray-200",
-      badge: "bg-gray-100 text-gray-700 border border-gray-200"
-    }
-  };
-
-  const styles = categoryStyles[expense.category] || categoryStyles.Other;
-
 
   return (
-
-    <div id="expenseListContainer" className="space-y-3">
-
-      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#111827]/10 shadow-xs hover:shadow-md hover:border-[#80A1C1]/50 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
-
-        {/* Left Item Info */}
-
+    <m.li
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -24 }}
+      transition={{ duration: 0.2 }}
+      className="list-none"
+    >
+      <div className="bg-card rounded-2xl p-4 sm:p-5 border border-ink/10 shadow-xs hover:shadow-md hover:border-accent/50 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Left: item info */}
         <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
-
-          <div className={`w-12 h-12 rounded-2xl ${styles.iconBg} flex items-center justify-center text-xl shrink-0`}>
-
-            {expense.icon}
-
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 border"
+            style={{ backgroundColor: `${category.color}33`, borderColor: `${category.color}66` }}
+          >
+            {category.icon}
           </div>
-
 
           <div className="min-w-0 flex-1">
-
             <div className="flex flex-wrap items-center gap-2 mb-1">
-
-              <h4 className="text-sm sm:text-base font-bold text-[#111827] truncate">
-
-                {expense.title}
-
-              </h4>
-
-
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${styles.badge}`}>
-
+              <h4 className="text-sm sm:text-base font-bold text-ink truncate">{expense.title}</h4>
+              <span
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold text-ink border"
+                style={{ backgroundColor: `${category.color}33`, borderColor: `${category.color}66` }}
+              >
                 {expense.category}
-
               </span>
-
-            </div>
-
-
-            <div className="flex items-center gap-3 text-xs text-[#6B7280]">
-
-              <span className="flex items-center gap-1">
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+              {(expense.recurring || expense.recurringSourceId) && (
+                <span
+                  title={expense.recurring ? "Repeats every month" : "Created from a monthly repeat"}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-accent/15 text-ink border border-accent/30"
                 >
-
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-
-                </svg>
-
-                {expense.date}
-
-              </span>
-
-
-              <span className="hidden sm:inline-block truncate max-w-xs">
-
-                • {expense.description}
-
-              </span>
-
+                  <RepeatIcon className="h-3 w-3" />
+                  {expense.recurring ? "Monthly" : "Auto"}
+                </span>
+              )}
             </div>
 
+            <div className="flex items-center gap-3 text-xs text-muted">
+              <span className="flex items-center gap-1">
+                <CalendarIcon className="h-3.5 w-3.5" />
+                {formatDate(expense.date)}
+              </span>
+              {expense.description && (
+                <span className="hidden sm:inline-block truncate max-w-xs">
+                  • {expense.description}
+                </span>
+              )}
+            </div>
           </div>
-
         </div>
 
-
-        {/* Right Side */}
-
-        <div className="flex items-center justify-between sm:justify-end gap-4 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#111827]/5">
-
-          <div className="text-left sm:text-right">
-
-            <span className="text-base sm:text-lg font-bold font-mono text-[#111827] tracking-tight">
-
-              ${expense.amount.toFixed(2)}
-
-            </span>
-
-          </div>
-
+        {/* Right side */}
+        <div className="flex items-center justify-between sm:justify-end gap-4 pt-2 sm:pt-0 border-t sm:border-t-0 border-ink/5">
+          <span
+            className={`text-base sm:text-lg font-bold font-mono tracking-tight ${
+              isIncome ? "text-success" : "text-ink"
+            }`}
+          >
+            {isIncome ? "+" : ""}
+            {formatMoney(expense.amount, settings.currency)}
+          </span>
 
           <div className="flex items-center gap-1.5">
-
-            {/* Edit */}
-
             <button
-
-              onClick={handleEditClick}
-
-              title="Edit Expense"
-
-              className="p-2 rounded-xl bg-[#FFF5E6] hover:bg-[#FAD4C0] text-[#111827] border border-[#111827]/10 transition-colors cursor-pointer"
+              type="button"
+              onClick={() => openModalForEdit(expense)}
+              title="Edit"
+              aria-label={`Edit ${expense.title}`}
+              className="p-2 rounded-xl bg-bg hover:bg-primary/60 text-ink border border-ink/10 transition-colors cursor-pointer"
             >
-
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                />
-
-              </svg>
-
+              <PencilIcon />
             </button>
-
-
-            {/* Delete */}
-
             <button
-
-              onClick={handleDeleteClick}
-
-              title="Delete Expense"
-
-              className="p-2 rounded-xl bg-[#FFF5E6] hover:bg-[#DC2626]/15 hover:text-[#DC2626] text-[#111827] border border-[#111827]/10 transition-colors cursor-pointer"
+              type="button"
+              onClick={() => setConfirming(true)}
+              title="Delete"
+              aria-label={`Delete ${expense.title}`}
+              className="p-2 rounded-xl bg-bg hover:bg-danger/15 hover:text-danger text-ink border border-ink/10 transition-colors cursor-pointer"
             >
-
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-
-              </svg>
-
+              <TrashIcon />
             </button>
-
           </div>
-
         </div>
-
       </div>
 
-    </div>
-
+      <AnimatePresence>
+        {confirming && (
+          <ConfirmDialog
+            title="Delete transaction?"
+            message={`"${expense.title}" will be removed. You can undo this right after.`}
+            onCancel={() => setConfirming(false)}
+            onConfirm={handleConfirmDelete}
+          />
+        )}
+      </AnimatePresence>
+    </m.li>
   );
 };
 

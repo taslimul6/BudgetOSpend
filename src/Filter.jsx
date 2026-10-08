@@ -1,153 +1,120 @@
-import React, { useContext } from 'react';
-import { ExpenseContext } from './Context';
+import { useExpenses } from "./Context";
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "./constants/categories";
+import MonthPicker from "./Components/MonthPicker";
+import SearchInput from "./Components/SearchInput";
+import { ChevronDownIcon, RefreshIcon } from "./Components/Icons";
+
+const TYPE_OPTIONS = [
+  { key: "All", label: "All" },
+  { key: "expense", label: "Expenses" },
+  { key: "income", label: "Income" },
+];
 
 const Filter = () => {
   const {
+    typeFilter,
+    setTypeFilter,
     selectedCategory,
     setSelectedCategory,
     sortBy,
     setSortBy,
-    searchQuery,
-    setSearchQuery,
     resetFilters,
-  } = useContext(ExpenseContext);
+  } = useExpenses();
 
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-  };
+  const visibleCategories =
+    typeFilter === "expense"
+      ? EXPENSE_CATEGORIES
+      : typeFilter === "income"
+        ? INCOME_CATEGORIES
+        : [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  const pills = [{ name: "All", icon: "" }, ...visibleCategories];
 
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-  };
-
-  const handleResetClick = () => {
-    resetFilters();
-  };
-
-  const categories = [
-    { key: "All", label: "All Categories", icon: "" },
-    { key: "Food", label: "Food", icon: "🍱" },
-    { key: "Rent", label: "Rent", icon: "🏠" },
-    { key: "Entertainment", label: "Entertainment", icon: "🎬" },
-    { key: "Medical", label: "Medical", icon: "💊" },
-    { key: "Utilities", label: "Utilities", icon: "⚡" },
-    { key: "Shopping", label: "Shopping", icon: "🛍️" },
-    { key: "Other", label: "Other", icon: "✨" },
-  ];
-
-  const getPillClassName = (category) => {
-    const baseClasses = "filter-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer";
-    if (category === selectedCategory) {
-      return `${baseClasses} active px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-[#111827] text-white shadow-sm`;
-    }
-    return `${baseClasses} bg-[#FFF5E6] hover:bg-[#FAD4C0]/50 text-[#111827] border border-[#111827]/10`;
-  };
+  const pillClass = (active) =>
+    `px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+      active
+        ? "bg-ink text-bg shadow-sm"
+        : "bg-bg hover:bg-primary/40 text-ink border border-ink/10"
+    }`;
 
   return (
-    <section className="bg-white rounded-3xl p-5 sm:p-6 border border-[#111827]/10 shadow-sm space-y-4">
+    <section className="bg-card rounded-3xl p-5 sm:p-6 border border-ink/10 shadow-sm space-y-4">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="block md:hidden w-full">
-          <div className="relative">
-            <input
-              type="text"
-              id="mobileSearchInput"
-              placeholder="Search expenses by title..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full pl-10 pr-10 py-2 bg-[#FFF5E6]/60 border border-[#111827]/15 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#80A1C1]"
-            />
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#6B7280]">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#6B7280] hover:text-[#111827]"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
+        <MonthPicker />
 
+        <div role="group" aria-label="Type" className="flex items-center gap-1 p-1 bg-bg rounded-xl self-start">
+          {TYPE_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              aria-pressed={typeFilter === opt.key}
+              onClick={() => setTypeFilter(opt.key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                typeFilter === opt.key ? "bg-card text-ink shadow-sm" : "text-muted hover:text-ink"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="block md:hidden">
+        <SearchInput
+          id="mobileSearchInput"
+          placeholder="Search by title, note or category..."
+          className="py-2 bg-bg/60 border border-ink/15"
+        />
+      </div>
+
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div
           className="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0 scrollbar-none"
           id="categoryFilterContainer"
         >
-          {categories.map((cat) => (
+          {pills.map((cat) => (
             <button
-              key={cat.key}
-              data-category={cat.key}
-              onClick={() => handleCategoryClick(cat.key)}
-              className={getPillClassName(cat.key)}
+              key={cat.name}
+              type="button"
+              aria-pressed={selectedCategory === cat.name}
+              onClick={() => setSelectedCategory(cat.name)}
+              className={pillClass(selectedCategory === cat.name)}
             >
               {cat.icon && <span className="mr-1">{cat.icon}</span>}
-              {cat.label}
+              {cat.name === "All" ? "All Categories" : cat.name}
             </button>
           ))}
         </div>
 
         <div className="flex items-center gap-3 self-end lg:self-auto">
-          <div className="flex items-center gap-2 text-xs text-[#6B7280]">
+          <label className="flex items-center gap-2 text-xs text-muted">
             <span className="font-medium whitespace-nowrap">Sort by:</span>
             <div className="relative">
               <select
                 id="sortBySelect"
                 value={sortBy}
-                onChange={handleSortChange}
-                className="appearance-none bg-[#FFF5E6] border border-[#111827]/15 text-[#111827] text-xs font-semibold rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-[#80A1C1] cursor-pointer"
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-bg border border-ink/15 text-ink text-xs font-semibold rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
               >
                 <option value="date-desc">Date: Newest First</option>
                 <option value="date-asc">Date: Oldest First</option>
                 <option value="amount-desc">Amount: High to Low</option>
                 <option value="amount-asc">Amount: Low to High</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#111827]">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-ink">
+                <ChevronDownIcon />
               </div>
             </div>
-          </div>
+          </label>
           <button
+            type="button"
             id="resetFiltersBtn"
-            onClick={handleResetClick}
+            onClick={resetFilters}
+            aria-label="Reset filters and sorting"
             title="Reset filters and sorting"
-            className="p-2 rounded-xl bg-[#FFF5E6] hover:bg-[#FAD4C0]/50 text-[#111827] border border-[#111827]/10 transition-all cursor-pointer"
+            className="p-2 rounded-xl bg-bg hover:bg-primary/40 text-ink border border-ink/10 transition-all cursor-pointer"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
+            <RefreshIcon />
           </button>
         </div>
       </div>

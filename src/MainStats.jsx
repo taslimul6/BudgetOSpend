@@ -1,200 +1,145 @@
-import { useContext } from "react";
-import { ExpenseContext } from "./Context";
+import { useMemo } from "react";
+import { useExpenses } from "./Context";
+import { ALL_MONTHS, computeTotals, countMonths } from "./Context/selectors";
+import { daysLeftInMonth, formatMonth } from "./utils/date";
+import { formatMoney } from "./utils/format";
+import { TrendUpIcon, WalletIcon } from "./Components/Icons";
+
+const cardClass =
+  "bg-card rounded-3xl p-6 border border-ink/10 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between";
+const labelClass = "text-xs font-semibold uppercase tracking-wider text-muted";
 
 const MainStats = () => {
-  const { expenses } = useContext(ExpenseContext);
+  const { monthExpenses, selectedMonth, settings } = useExpenses();
+  const { currency, budgetLimit } = settings;
+  const isAll = selectedMonth === ALL_MONTHS;
 
-  const BUDGET_LIMIT = 4000;
-  const totalSpent = expenses.reduce((total, expense) => total + expense.amount, 0);
-  const remaining = BUDGET_LIMIT - totalSpent;
-  const spentPercentage = totalSpent / BUDGET_LIMIT * 100;
+  const totals = useMemo(() => computeTotals(monthExpenses), [monthExpenses]);
+
+  const budgetTotal = budgetLimit * (isAll ? countMonths(monthExpenses) : 1);
+  const remaining = budgetTotal - totals.expense;
+  const spentPercentage = (totals.expense / budgetTotal) * 100;
   const isOverBudget = remaining < 0;
 
-  const getProgressBarColor = () => {
-    if (spentPercentage >= 100) return "bg-[#DC2626]";
-    if (spentPercentage >= 80) return "bg-[#F59E0B]";
-    return "bg-[#16A34A]";
-  };
+  const level = spentPercentage >= 100 ? "danger" : spentPercentage >= 80 ? "warning" : "success";
+  const barColor = { danger: "bg-danger", warning: "bg-warning", success: "bg-success" }[level];
+  const statusMessage = {
+    danger: "Over budget!",
+    warning: "Approaching limit",
+    success: "Healthy spending pace",
+  }[level];
 
-  const getStatusMessage = () => {
-    if (spentPercentage >= 100) return "Over budget!";
-    if (spentPercentage >= 80) return "Approaching limit";
-    return "Healthy spending pace";
-  };
-
-  const getStatusColor = () => {
-    if (spentPercentage >= 100) return "bg-[#DC2626]";
-    if (spentPercentage >= 80) return "bg-[#F59E0B]";
-    return "bg-[#16A34A]";
-  };
+  const daysLeft = isAll ? null : daysLeftInMonth(selectedMonth);
+  const periodLabel = isAll
+    ? "All time"
+    : daysLeft !== null
+      ? `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`
+      : formatMonth(selectedMonth);
 
   return (
-    <>
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* Expenses */}
+      <div className={cardClass}>
+        <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/30 rounded-full blur-2xl pointer-events-none" />
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <span className={labelClass}>Total Expense</span>
+            <span className="p-2 rounded-xl bg-bg text-warning">
+              <WalletIcon className="h-5 w-5" />
+            </span>
+          </div>
+          <div
+            className="text-3xl font-extrabold font-mono text-ink tracking-tight"
+            id="totalExpenseDisplay"
+          >
+            {formatMoney(totals.expense, currency)}
+          </div>
+        </div>
+        <div className="mt-4 pt-3 border-t border-ink/5 flex items-center justify-between text-xs text-muted">
+          <span className="flex items-center gap-1 font-medium">
+            <TrendUpIcon className="h-3.5 w-3.5" />
+            <span id="totalEntriesDisplay">
+              {totals.expenseCount} {totals.expenseCount === 1 ? "entry" : "entries"}
+            </span>
+          </span>
+          <span>{isAll ? "All time" : formatMonth(selectedMonth)}</span>
+        </div>
+      </div>
 
-        {/* Card 1: Total Expense */}
-        <div className="bg-white rounded-3xl p-6 border border-[#111827]/10 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
-          <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#FAD4C0]/40 rounded-full blur-2xl pointer-events-none"></div>
+      {/* Income & balance */}
+      <div className={cardClass}>
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <span className={labelClass}>Income</span>
+            <span className="p-2 rounded-xl bg-accent/15 text-accent">
+              <TrendUpIcon className="h-5 w-5" />
+            </span>
+          </div>
+          <div className="text-3xl font-extrabold font-mono text-success tracking-tight" id="totalIncomeDisplay">
+            {formatMoney(totals.income, currency)}
+          </div>
+        </div>
+        <div className="mt-4 pt-3 border-t border-ink/5 flex items-center justify-between text-xs text-muted">
+          <span>Balance</span>
+          <span
+            id="balanceDisplay"
+            className={`font-mono font-semibold ${totals.balance < 0 ? "text-danger" : "text-ink"}`}
+          >
+            {formatMoney(totals.balance, currency)}
+          </span>
+        </div>
+      </div>
 
+      {/* Budget */}
+      <div className="bg-linear-to-br from-bg to-primary/30 rounded-3xl p-6 border border-ink/10 shadow-sm hover:shadow-md transition-shadow lg:col-span-2 flex flex-col justify-between">
+        <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
-                Total Expense
-              </span>
+            <span className={labelClass}>{isAll ? "Budget (all months)" : "Monthly Budget Target"}</span>
+            <h3 className="text-xl font-bold text-ink mt-0.5">
+              {formatMoney(budgetTotal, currency)} Limit
+            </h3>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-muted">Remaining</span>
+            <p
+              className={`text-lg font-bold font-mono ${isOverBudget ? "text-danger" : "text-success"}`}
+              id="budgetRemainingDisplay"
+            >
+              {formatMoney(remaining, currency)}
+            </p>
+          </div>
+        </div>
 
-              <span className="p-2 rounded-xl bg-[#FFF5E6] text-[#D97706]">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-              </span>
-            </div>
-
+        <div className="my-4">
+          <div className="flex items-center justify-between text-xs font-medium text-ink mb-1.5">
+            <span>Spent: {spentPercentage.toFixed(1)}%</span>
+            <span>Limit: {formatMoney(budgetTotal, currency)}</span>
+          </div>
+          <div
+            role="progressbar"
+            aria-label="Budget used"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.min(Math.round(spentPercentage), 100)}
+            className="w-full bg-card/70 h-3 rounded-full overflow-hidden p-0.5 border border-ink/10"
+          >
             <div
-              className="text-3xl font-extrabold font-mono text-[#111827] tracking-tight"
-              id="totalExpenseDisplay"
-            >
-              $ {totalSpent.toFixed(2)}
-            </div>
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-[#111827]/5 flex items-center justify-between text-xs text-[#6B7280]">
-            <span className="flex items-center gap-1 text-[#16A34A] font-medium">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-3.5 w-3.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              </svg>
-
-              Dynamic Live Calc
-            </span>
-
-            <span>This Month</span>
+              id="budgetProgressBar"
+              className={`${barColor} h-full rounded-full transition-all duration-500`}
+              style={{ width: `${Math.min(spentPercentage, 100).toFixed(1)}%` }}
+            />
           </div>
         </div>
 
-        {/* Card 2: Total Transactions Count */}
-        <div className="bg-white rounded-3xl p-6 border border-[#111827]/10 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
-                Total Entries
-              </span>
-
-              <span className="p-2 rounded-xl bg-[#80A1C1]/15 text-[#80A1C1]">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                  />
-                </svg>
-              </span>
-            </div>
-
-            <div
-              className="text-3xl font-extrabold font-mono text-[#111827] tracking-tight"
-              id="totalEntriesDisplay"
-            >
-              {expenses.length} Items
-            </div>
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-[#111827]/5 flex items-center justify-between text-xs text-[#6B7280]">
-            <span>Active in list</span>
-
-            <span
-              className="font-medium text-[#111827]"
-              id="filteredCountNotice"
-            >
-              Showing all items
-            </span>
-          </div>
+        <div className="flex items-center justify-between text-xs text-muted pt-2 border-t border-ink/10">
+          <span className="flex items-center gap-1.5">
+            <span className={`w-2 h-2 rounded-full ${barColor}`} />
+            {statusMessage}
+          </span>
+          <span className="font-medium">{periodLabel}</span>
         </div>
-
-        {/* Card 3: Budget Status & Remaining */}
-        <div className="bg-gradient-to-br from-[#FFF5E6] to-[#FAD4C0]/40 rounded-3xl p-6 border border-[#111827]/10 shadow-sm hover:shadow-md transition-shadow lg:col-span-2 flex flex-col justify-between">
-
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
-                Monthly Budget Target
-              </span>
-
-              <h3 className="text-xl font-bold text-[#111827] mt-0.5">
-                ${BUDGET_LIMIT.toFixed(2)} Limit
-              </h3>
-            </div>
-
-            <div className="text-right">
-              <span className="text-xs text-[#6B7280]">
-                Remaining
-              </span>
-
-              <p
-                className={`text-lg font-bold font-mono ${isOverBudget ? "text-[#DC2626]" : "text-[#16A34A]"}`}
-                id="budgetRemainingDisplay"
-              >
-                ${remaining.toFixed(2)}
-              </p>
-            </div>
-          </div>
-
-          <div className="my-4">
-            <div className="flex items-center justify-between text-xs font-medium text-[#111827] mb-1.5">
-              <span>Spent: {spentPercentage.toFixed(1)}%</span>
-              <span>Limit: ${BUDGET_LIMIT.toFixed(2)}</span>
-            </div>
-
-            <div className="w-full bg-white/70 h-3 rounded-full overflow-hidden p-0.5 border border-[#111827]/10">
-              <div
-                id="budgetProgressBar"
-                className={`${getProgressBarColor()} h-full rounded-full transition-all duration-500`}
-                style={{ width: `${Math.min(spentPercentage, 100).toFixed(1)}%` }}
-              ></div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between text-xs text-[#6B7280] pt-2 border-t border-[#111827]/10">
-            <span className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${getStatusColor()}`}></span>
-              {getStatusMessage()}
-            </span>
-
-            <span className="font-medium">
-              28 Days Left
-            </span>
-          </div>
-
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 

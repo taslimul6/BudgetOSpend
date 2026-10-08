@@ -1,12 +1,17 @@
-import Logo from './assets/logo.svg';
-import { useContext } from 'react';
-import { ExpenseContext } from './Context';
+import Logo from "./assets/logo.svg";
+import { useExpenses } from "./Context";
+import SearchInput from "./Components/SearchInput";
+import { GearIcon, MoonIcon, PlusIcon, SunIcon } from "./Components/Icons";
 
-const Navbar = ({ setIsExpenseModalOpen }) => {
-  const { searchQuery, setSearchQuery } = useContext(ExpenseContext);
+const iconButton =
+  "w-10 h-10 rounded-xl bg-card hover:bg-primary/40 text-ink border border-ink/10 flex items-center justify-center transition-colors cursor-pointer";
+
+const Navbar = () => {
+  const { openModalForNew, openSettings, toggleTheme, settings } = useExpenses();
+  const isDark = settings.theme === "dark";
 
   return (
-    <header className="sticky top-0 z-30 bg-[#FFF5E6]/90 backdrop-blur-md border-b border-[#111827]/10 transition-all">
+    <header className="sticky top-0 z-30 bg-bg/90 backdrop-blur-md border-b border-ink/10 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-[#111827] flex items-center justify-center shadow-sm p-1.5">
@@ -14,59 +19,55 @@ const Navbar = ({ setIsExpenseModalOpen }) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold tracking-tight text-[#111827]">Bento<span className="text-[#80A1C1]">Spend</span></h1>
-              <span className="px-2 py-0.5 text-[11px] font-semibold bg-[#FAD4C0] text-[#111827] rounded-full">v1.0</span>
+              <h1 className="text-xl font-extrabold tracking-tight text-ink">
+                Bento<span className="text-accent">Spend</span>
+              </h1>
+              <span className="px-2 py-0.5 text-[11px] font-semibold bg-primary text-on-primary rounded-full">
+                v1.0
+              </span>
             </div>
-            <p className="text-xs text-[#6B7280]">Expense & Budget Manager</p>
+            <p className="text-xs text-muted">Expense &amp; Budget Manager</p>
           </div>
         </div>
 
         <div className="hidden md:flex items-center flex-1 max-w-md mx-6">
-          <div className="relative w-full">
-            <input
-              type="text"
-              id="headerSearchInput"
-              placeholder="Search expenses by title..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#111827]/15 rounded-xl text-sm text-[#111827] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#80A1C1] focus:border-transparent transition-all shadow-sm"
-            />
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#6B7280]">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            {searchQuery && (
-              <button
-                id="clearHeaderSearch"
-                onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#6B7280] hover:text-[#111827]"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </div>
+          <SearchInput
+            id="headerSearchInput"
+            placeholder="Search by title, note or category..."
+            className="py-2.5 bg-card border border-ink/15 shadow-sm"
+          />
         </div>
 
-        <div className="flex items-center gap-3">
-          <a
-            onClick={() => setIsExpenseModalOpen(true)}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={openModalForNew}
             id="openAddModalBtn"
-            className="flex items-center gap-2 bg-[#FAD4C0] hover:bg-[#f5c0a7] active:scale-[0.98] text-[#111827] px-4 sm:px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 shadow-sm border border-[#111827]/10 cursor-pointer"
+            className="flex items-center gap-2 bg-primary hover:bg-primary-hover active:scale-[0.98] text-on-primary px-4 sm:px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 shadow-sm border border-ink/10 cursor-pointer"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Add Expense</span>
-          </a>
+            <PlusIcon />
+            <span>Add</span>
+          </button>
 
-          <div className="flex items-center gap-2 pl-2 border-l border-[#111827]/10">
-            <div className="w-9 h-9 rounded-xl bg-[#80A1C1] flex items-center justify-center font-bold text-white text-sm shadow-sm">
-              LWS
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            title={isDark ? "Light mode" : "Dark mode"}
+            className={iconButton}
+          >
+            {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={openSettings}
+            aria-label="Open settings"
+            title="Settings"
+            className={iconButton}
+          >
+            <GearIcon className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </header>
