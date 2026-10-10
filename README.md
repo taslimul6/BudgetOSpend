@@ -1,224 +1,66 @@
-# BudgetOSpend - Smart Expense Tracker
+# BudgetOSpend
 
-A modern, responsive expense tracking application built with React 19, Vite, and Tailwind CSS v4. Features a clean bento-grid dashboard, category-based filtering, real-time budget tracking, and full CRUD operations for expenses.
+A clean, responsive expense and budget tracker with a bento-grid dashboard, built with React 19 and Tailwind CSS v4.
 
-## Live Demo
+**[Live demo → budgetospend.vercel.app](https://budgetospend.vercel.app/)**
 
-**[https://budgetospend.vercel.app/](https://budgetospend.vercel.app/)**
-
-## Screenshots
-
-| Dashboard | Expense List | Add/Edit Modal |
-|-----------|--------------|----------------|
-| Bento-grid stats with budget progress | Filterable, sortable expense cards | Modal form with validation |
+![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+![React Hook Form](https://img.shields.io/badge/React_Hook_Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white)
+![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
 ## Features
 
-### Core Functionality
-- **Expense Management** - Add, edit, delete expenses with title, amount, category, date, and description
-- **Category System** - 8 predefined categories (Food, Rent, Entertainment, Medical, Utilities, Shopping, Education, Other) with unique color coding
-- **Real-time Budget Tracking** - Monthly budget limit ($4,000) with visual progress bar and remaining balance
-- **Smart Filtering** - Filter by category, search by title/description, sort by date or amount
-- **Persistent State** - All data managed via React Context + useReducer
+- **Expenses and income** — add, edit and delete, with an Undo after deleting
+- **Monthly budget** — progress bar, remaining balance and a month selector
+- **Filter, search and sort** — by category, type, text and amount or date
+- **Recurring entries** — repeat a transaction every month automatically
+- **Settings** — custom budget limit and currency (USD, BDT, EUR, GBP, INR)
+- **Dark mode** — follows your system and remembers your choice
+- **Your data stays yours** — saved in the browser, with JSON/CSV export and JSON import
 
-### UI/UX Features
-- **Bento Grid Layout** - Responsive dashboard with 4 stat cards (Total Expense, Total Entries, Budget Status)
-- **Category Color Coding** - Each category has distinct icon background and badge colors
-- **Empty/Not Found States** - Friendly illustrations when no expenses or no filter matches
-- **Toast Notifications** - Success/error feedback for all actions (react-toastify)
-- **Confirmation Dialogs** - Native browser confirm for deletions
-- **Form Validation** - Inline field-level validation with error messages
-- **Responsive Design** - Mobile-first, works on all screen sizes
-- **Dark/Light Ready** - CSS variables for easy theming
+## Getting Started
 
-### Technical Highlights
-- **React 19** with modern hooks (useReducer, useContext, useMemo)
-- **Vite 8** for lightning-fast dev server and builds
-- **Tailwind CSS v4** with custom design tokens (@theme)
-- **ES Modules** throughout
-- **Component-based architecture** with clear separation of concerns
+Requires Node.js 18+.
 
-## Tech Stack
+```bash
+git clone https://github.com/<your-username>/budgetospend.git
+cd budgetospend
+npm install
+npm run dev
+```
 
-| Category | Technology |
-|----------|------------|
-| Framework | React 19.2.8 |
-| Build Tool | Vite 8.3.0 |
-| Styling | Tailwind CSS 4.3.3 |
-| State Management | React Context + useReducer |
-| Notifications | react-toastify 10.x |
-| Linting | oxlint 1.81.0 |
-| Fonts | Inter + JetBrains Mono (Google Fonts) |
+Open http://localhost:5173.
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build to `dist/` |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Lint with oxlint |
+| `npm test` | Run the test suite (Vitest) |
 
 ## Project Structure
 
 ```
 src/
-├── Components/
-│   └── ExpenseModal.jsx      # Add/Edit expense modal with validation
-├── Context/
-│   └── index.jsx             # ExpenseContext + useReducer provider
-├── Records/
-│   ├── RecordCard.jsx        # Individual expense card component
-│   ├── RecordList.jsx        # List with empty/not-found states
-│   └── EmptyState.jsx        # Empty state illustration component
-├── App.jsx                   # Root component with providers
-├── main.jsx                  # Entry point
-├── Filter.jsx                # Category pills, search, sort, reset
-├── Navbar.jsx                # Header with search & add button
-├── MainStats.jsx             # Dashboard stat cards (4-grid)
-├── CatStats.jsx              # Category spending breakdown
-├── Footer.jsx                # Footer component
-└── index.css                 # Global styles + Tailwind imports
+├── Components/   # Modal, forms, settings, shared UI
+├── Context/      # State: reducer, selectors, provider
+├── Records/      # Transaction list and cards
+├── constants/    # Categories, settings, seed data
+├── utils/        # Dates, formatting, storage, recurring logic
+└── test/         # Test setup and helpers
 ```
 
-## Installation
-
-### Prerequisites
-- Node.js 18+
-- npm 9+ (or pnpm/yarn)
-
-### Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/budgetospend.git
-cd budgetospend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-The app will be available at `http://localhost:5173` (or next available port).
-
-### Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Vite dev server with HMR |
-| `npm run build` | Production build to `dist/` |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | Run oxlint for code quality |
-
-## Usage
-
-### Adding an Expense
-1. Click **"Add Expense"** button in header or empty state
-2. Fill in required fields: Title, Amount, Category, Date
-3. Optional: Add description
-4. Click **"Save Expense"**
-
-### Editing an Expense
-1. Click the **pencil icon** on any expense card
-2. Modify fields in the modal
-3. Click **"Update Expense"**
-
-### Deleting an Expense
-1. Click the **trash icon** on any expense card
-2. Confirm in the browser dialog
-3. Toast notification confirms deletion
-
-### Filtering & Sorting
-- **Category Pills** - Click to filter by category (All, Food, Rent, etc.)
-- **Search** - Type in header (desktop) or filter section (mobile)
-- **Sort Dropdown** - Date (newest/oldest), Amount (high/low)
-- **Reset Button** - Clears all filters and sorting
-
-### Budget Tracking
-- Monthly limit: **$4,000** (configurable in `MainStats.jsx`)
-- Progress bar updates in real-time
-- Color changes: Green (<80%), Amber (80-99%), Red (≥100%)
-- Remaining balance shown in budget card
-
-## Configuration
-
-### Budget Limit
-Edit `BUDGET_LIMIT` constant in `src/MainStats.jsx`:
-```jsx
-const BUDGET_LIMIT = 5000; // Change to your monthly budget
-```
-
-### Categories & Colors
-Modify `categoryIcons` in `src/Components/ExpenseModal.jsx` and `categoryStyles` in `src/Records/RecordCard.jsx`.
-
-### Tailwind Theme
-Custom design tokens in `src/index.css`:
-```css
-@theme {
-  --color-primary: #FAD4C0;
-  --color-secondary: #80A1C1;
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger: #DC2626;
-  --color-surface: #FFF5E6;
-  --color-text-main: #111827;
-  --color-text-muted: #6B7280;
-  --font-sans: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
-```
-
-## State Management (useReducer)
-
-The app uses a single `useReducer` for all global state:
-
-```javascript
-// State shape
-{
-  expenses: Expense[],
-  ui: { isExpenseModalOpen: boolean, editExpense: Expense|null },
-  filters: { selectedCategory: string, sortBy: string, searchQuery: string }
-}
-
-// Actions dispatched via context
-dispatch({ type: 'ADD_EXPENSE', payload: expense })
-dispatch({ type: 'SET_CATEGORY_FILTER', payload: 'Food' })
-dispatch({ type: 'RESET_FILTERS' })
-```
-
-Derived state (`filteredExpenses`) computed on each render via `getFilteredExpenses()`.
+State is a single `useReducer` exposed through React Context and persisted to `localStorage`.
 
 ## Deployment
 
-### Vercel (Recommended)
-```bash
-npm run build
-# Deploy dist/ folder to Vercel
-# Or connect GitHub repo for auto-deploys
-```
-
-### Netlify
-```bash
-npm run build
-# Drag dist/ folder to Netlify dashboard
-```
-
-### Static Hosting (Any)
-The `dist/` folder contains static assets - works on GitHub Pages, Firebase Hosting, Surge, etc.
-
-## Contributing
-
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-## License
-
-MIT License - feel free to use for learning or commercial projects.
-
-## Acknowledgments
-
-- **Tailwind CSS v4** for the modern utility-first styling
-- **Vite** for the exceptional developer experience
-- **react-toastify** for beautiful notifications
-- **Inter & JetBrains Mono** fonts for clean typography
-- Design inspiration from **Bento Grid** layouts
-
----
-
-Built with ❤️ using React + Vite + Tailwind CSS
+The app is a static site. Run `npm run build` and deploy the `dist/` folder to Vercel, Netlify or any static host.
