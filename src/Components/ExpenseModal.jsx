@@ -15,7 +15,7 @@ const fieldClass =
   "w-full px-4 py-2.5 bg-bg/40 border rounded-xl text-sm text-ink focus:outline-none focus:ring-2 focus:bg-card transition-all";
 
 const fieldState = (error) =>
-  `${fieldClass} ${error ? "border-danger focus:ring-danger" : "border-ink/15 focus:ring-accent"}`;
+  `${fieldClass} ${error ? "border-danger focus:ring-danger" : "border-ink/15 focus:ring-primary"}`;
 
 const FieldError = ({ error }) =>
   error ? (
@@ -229,7 +229,7 @@ const ExpenseModal = () => {
 
         {/* Recurring */}
         <label className="flex items-start gap-3 p-3 rounded-xl bg-bg/60 border border-ink/10 cursor-pointer">
-          <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[#80A1C1]" {...register("recurring")} />
+          <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register("recurring")} />
           <span className="text-sm text-ink">
             <span className="flex items-center gap-1.5 font-semibold">
               <RepeatIcon className="h-4 w-4" /> Repeat every month
@@ -244,7 +244,7 @@ const ExpenseModal = () => {
           <button
             type="button"
             onClick={closeModal}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-ink bg-bg hover:bg-primary/40 transition-colors cursor-pointer"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-ink bg-bg hover:bg-primary/10 transition-colors cursor-pointer"
           >
             Cancel
           </button>

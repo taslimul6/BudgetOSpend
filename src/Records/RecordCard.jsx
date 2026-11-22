@@ -55,7 +55,7 @@ const RecordCard = ({ expense }) => {
       transition={{ duration: 0.2 }}
       className="list-none"
     >
-      <div className="bg-card rounded-2xl p-4 sm:p-5 border border-ink/10 shadow-xs hover:shadow-md hover:border-accent/50 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-card rounded-2xl p-4 sm:p-5 border border-ink/10 shadow-xs hover:shadow-md hover:border-primary/40 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Left: item info */}
         <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
           <div
@@ -116,7 +116,7 @@ const RecordCard = ({ expense }) => {
               onClick={() => openModalForEdit(expense)}
               title="Edit"
               aria-label={`Edit ${expense.title}`}
-              className="p-2 rounded-xl bg-bg hover:bg-primary/60 text-ink border border-ink/10 transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-bg hover:bg-primary/15 text-ink border border-ink/10 transition-colors cursor-pointer"
             >
               <PencilIcon />
             </button>

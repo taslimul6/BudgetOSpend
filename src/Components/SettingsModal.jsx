@@ -14,9 +14,9 @@ const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 
 const sectionTitle = "text-xs font-semibold text-ink uppercase tracking-wider mb-2";
 const inputClass =
-  "w-full px-4 py-2.5 bg-bg/40 border border-ink/15 rounded-xl text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent focus:bg-card transition-all";
+  "w-full px-4 py-2.5 bg-bg/40 border border-ink/15 rounded-xl text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary focus:bg-card transition-all";
 const secondaryButton =
-  "inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-ink bg-bg hover:bg-primary/40 border border-ink/10 transition-colors cursor-pointer";
+  "inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-ink bg-bg hover:bg-primary/10 border border-ink/10 transition-colors cursor-pointer";
 
 const SettingsModal = () => {
   const { settings, expenses, updateSettings, closeSettings, importExpenses } = useExpenses();

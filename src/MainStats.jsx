@@ -22,7 +22,8 @@ const MainStats = () => {
   const isOverBudget = remaining < 0;
 
   const level = spentPercentage >= 100 ? "danger" : spentPercentage >= 80 ? "warning" : "success";
-  const barColor = { danger: "bg-danger", warning: "bg-warning", success: "bg-success" }[level];
+  // Light tints so the bar stays visible on the gradient hero card in both themes.
+  const barColor = { danger: "bg-[#FCA5A5]", warning: "bg-[#FCD34D]", success: "bg-[#86EFAC]" }[level];
   const statusMessage = {
     danger: "Over budget!",
     warning: "Approaching limit",
@@ -40,11 +41,11 @@ const MainStats = () => {
     <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
       {/* Expenses */}
       <div className={cardClass}>
-        <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/30 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
         <div>
           <div className="flex items-center justify-between mb-3">
             <span className={labelClass}>Total Expense</span>
-            <span className="p-2 rounded-xl bg-bg text-warning">
+            <span className="p-2 rounded-xl bg-warning/10 text-warning">
               <WalletIcon className="h-5 w-5" />
             </span>
           </div>
@@ -71,7 +72,7 @@ const MainStats = () => {
         <div>
           <div className="flex items-center justify-between mb-3">
             <span className={labelClass}>Income</span>
-            <span className="p-2 rounded-xl bg-accent/15 text-accent">
+            <span className="p-2 rounded-xl bg-success/10 text-success">
               <TrendUpIcon className="h-5 w-5" />
             </span>
           </div>
@@ -90,19 +91,22 @@ const MainStats = () => {
         </div>
       </div>
 
-      {/* Budget */}
-      <div className="bg-linear-to-br from-bg to-primary/30 rounded-3xl p-6 border border-ink/10 shadow-sm hover:shadow-md transition-shadow lg:col-span-2 flex flex-col justify-between">
-        <div className="flex items-center justify-between">
+      {/* Budget (hero card) */}
+      <div className="relative overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-white rounded-3xl p-6 shadow-lg shadow-hero-from/20 lg:col-span-2 flex flex-col justify-between">
+        <div className="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-white/10 pointer-events-none" />
+        <div className="absolute -bottom-16 -left-10 w-40 h-40 rounded-full bg-white/5 pointer-events-none" />
+
+        <div className="relative flex items-start justify-between gap-4">
           <div>
-            <span className={labelClass}>{isAll ? "Budget (all months)" : "Monthly Budget Target"}</span>
-            <h3 className="text-xl font-bold text-ink mt-0.5">
-              {formatMoney(budgetTotal, currency)} Limit
-            </h3>
+            <span className="text-xs font-semibold uppercase tracking-wider text-white/85">
+              {isAll ? "Budget (all months)" : "Monthly Budget Target"}
+            </span>
+            <h3 className="text-xl font-bold mt-0.5">{formatMoney(budgetTotal, currency)} Limit</h3>
           </div>
           <div className="text-right">
-            <span className="text-xs text-muted">Remaining</span>
+            <span className="text-xs text-white/85">Remaining</span>
             <p
-              className={`text-lg font-bold font-mono ${isOverBudget ? "text-danger" : "text-success"}`}
+              className={`text-2xl font-extrabold font-mono tracking-tight ${isOverBudget ? "text-[#FECACA]" : "text-white"}`}
               id="budgetRemainingDisplay"
             >
               {formatMoney(remaining, currency)}
@@ -110,8 +114,8 @@ const MainStats = () => {
           </div>
         </div>
 
-        <div className="my-4">
-          <div className="flex items-center justify-between text-xs font-medium text-ink mb-1.5">
+        <div className="relative my-5">
+          <div className="flex items-center justify-between text-xs font-medium text-white/85 mb-1.5">
             <span>Spent: {spentPercentage.toFixed(1)}%</span>
             <span>Limit: {formatMoney(budgetTotal, currency)}</span>
           </div>
@@ -121,7 +125,7 @@ const MainStats = () => {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.min(Math.round(spentPercentage), 100)}
-            className="w-full bg-card/70 h-3 rounded-full overflow-hidden p-0.5 border border-ink/10"
+            className="w-full bg-white/20 h-3 rounded-full overflow-hidden p-0.5"
           >
             <div
               id="budgetProgressBar"
@@ -131,7 +135,7 @@ const MainStats = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-muted pt-2 border-t border-ink/10">
+        <div className="relative flex items-center justify-between text-xs text-white/85 pt-3 border-t border-white/20">
           <span className="flex items-center gap-1.5">
             <span className={`w-2 h-2 rounded-full ${barColor}`} />
             {statusMessage}

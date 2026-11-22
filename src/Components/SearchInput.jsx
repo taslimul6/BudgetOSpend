@@ -49,7 +49,7 @@ const SearchInput = ({ id, placeholder, className = "" }) => {
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
-        className={`w-full pl-10 pr-10 text-sm text-ink placeholder:text-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-accent ${className}`}
+        className={`w-full pl-10 pr-10 text-sm text-ink placeholder:text-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-primary ${className}`}
       />
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
         <SearchIcon />

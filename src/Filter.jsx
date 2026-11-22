@@ -33,8 +33,8 @@ const Filter = () => {
   const pillClass = (active) =>
     `px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
       active
-        ? "bg-ink text-bg shadow-sm"
-        : "bg-bg hover:bg-primary/40 text-ink border border-ink/10"
+        ? "bg-primary text-on-primary shadow-sm"
+        : "bg-bg hover:bg-primary/10 text-ink border border-ink/10"
     }`;
 
   return (
@@ -69,7 +69,7 @@ const Filter = () => {
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div
-          className="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0 scrollbar-none"
+          className="flex flex-wrap items-center gap-1.5"
           id="categoryFilterContainer"
         >
           {pills.map((cat) => (
@@ -94,7 +94,7 @@ const Filter = () => {
                 id="sortBySelect"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-bg border border-ink/15 text-ink text-xs font-semibold rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
+                className="appearance-none bg-bg border border-ink/15 text-ink text-xs font-semibold rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
               >
                 <option value="date-desc">Date: Newest First</option>
                 <option value="date-asc">Date: Oldest First</option>
@@ -112,7 +112,7 @@ const Filter = () => {
             onClick={resetFilters}
             aria-label="Reset filters and sorting"
             title="Reset filters and sorting"
-            className="p-2 rounded-xl bg-bg hover:bg-primary/40 text-ink border border-ink/10 transition-all cursor-pointer"
+            className="p-2 rounded-xl bg-bg hover:bg-primary/10 text-ink border border-ink/10 transition-all cursor-pointer"
           >
             <RefreshIcon />
           </button>

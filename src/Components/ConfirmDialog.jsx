@@ -20,7 +20,7 @@ const ConfirmDialog = ({
         type="button"
         data-autofocus
         onClick={onCancel}
-        className="px-5 py-2.5 rounded-xl text-sm font-semibold text-ink bg-bg hover:bg-primary/40 transition-colors cursor-pointer"
+        className="px-5 py-2.5 rounded-xl text-sm font-semibold text-ink bg-bg hover:bg-primary/10 transition-colors cursor-pointer"
       >
         Cancel
       </button>

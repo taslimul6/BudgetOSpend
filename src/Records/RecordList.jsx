@@ -9,7 +9,7 @@ import EmptyState from "./EmptyState";
 import { PlusIcon, RefreshIcon, SearchIcon } from "../Components/Icons";
 
 const actionButton =
-  "inline-flex items-center gap-2 bg-bg hover:bg-primary text-ink border border-ink/15 px-4 py-2 rounded-xl font-semibold text-xs transition-all cursor-pointer";
+  "inline-flex items-center gap-2 bg-bg hover:bg-primary/15 text-ink border border-ink/15 px-4 py-2 rounded-xl font-semibold text-xs transition-all cursor-pointer";
 
 const NoResults = ({ hasMonthData }) => {
   const { resetFilters, selectedMonth, setSelectedMonth, openModalForNew } = useExpenses();
@@ -17,7 +17,7 @@ const NoResults = ({ hasMonthData }) => {
   return (
     <div className="bg-card rounded-3xl p-12 text-center border border-ink/10 max-w-md mx-auto">
       <div className="w-36 h-36 mx-auto mb-5 rounded-full bg-bg flex items-center justify-center">
-        <SearchIcon className="h-16 w-16 text-accent" strokeWidth={1.5} />
+        <SearchIcon className="h-16 w-16 text-primary" strokeWidth={1.5} />
       </div>
       <h3 className="text-xl font-bold text-ink">Not Found</h3>
       <p className="text-sm text-muted mt-2 mb-6">
@@ -97,7 +97,7 @@ const RecordList = () => {
           <span
             id="filteredCountNotice"
             role="status"
-            className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent/20 text-ink"
+            className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/15 text-ink"
           >
             {filteredExpenses.length} Records
           </span>

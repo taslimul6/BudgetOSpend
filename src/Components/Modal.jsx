@@ -109,7 +109,7 @@ const Modal = ({ title, subtitle, icon, onClose, children, widthClass = "max-w-l
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="w-8 h-8 rounded-xl bg-bg hover:bg-primary/60 text-ink flex items-center justify-center transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-xl bg-bg hover:bg-primary/15 text-ink flex items-center justify-center transition-colors cursor-pointer"
           >
             <CloseIcon />
           </button>

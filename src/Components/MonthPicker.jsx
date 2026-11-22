@@ -4,7 +4,7 @@ import { addMonths, formatMonth, todayISO, toMonthKey } from "../utils/date";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "./Icons";
 
 const navButton =
-  "w-9 h-9 rounded-xl bg-bg hover:bg-primary/40 text-ink border border-ink/10 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
+  "w-9 h-9 rounded-xl bg-bg hover:bg-primary/10 text-ink border border-ink/10 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
 
 const MonthPicker = () => {
   const { selectedMonth, setSelectedMonth } = useExpenses();
@@ -23,7 +23,7 @@ const MonthPicker = () => {
         <ChevronLeftIcon />
       </button>
 
-      <label className="relative flex items-center gap-2 px-3 h-9 rounded-xl bg-bg border border-ink/10 text-sm font-semibold text-ink min-w-40 justify-center cursor-pointer">
+      <label className="relative flex items-center gap-2 px-3 h-9 rounded-xl bg-bg border border-ink/10 text-sm font-semibold text-ink min-w-32 sm:min-w-40 justify-center cursor-pointer whitespace-nowrap">
         <CalendarIcon className="h-4 w-4 text-muted" />
         <span>{isAll ? "All time" : formatMonth(selectedMonth)}</span>
         <input
@@ -49,10 +49,10 @@ const MonthPicker = () => {
         type="button"
         aria-pressed={isAll}
         onClick={() => setSelectedMonth(isAll ? toMonthKey(todayISO()) : ALL_MONTHS)}
-        className={`h-9 px-3 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
+        className={`h-9 px-3 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 border transition-colors cursor-pointer ${
           isAll
-            ? "bg-ink text-bg border-ink"
-            : "bg-bg text-ink border-ink/10 hover:bg-primary/40"
+            ? "bg-primary text-on-primary border-primary"
+            : "bg-bg text-ink border-ink/10 hover:bg-primary/10"
         }`}
       >
         All time
