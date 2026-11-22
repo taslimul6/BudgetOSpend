@@ -1,35 +1,48 @@
 @import "tailwindcss";
 
-/* Theme tokens. Components use semantic utilities (bg-card, text-ink, ...) so
-   dark mode is just a different set of variable values. */
+/*
+  BudgetOSpend design tokens.
+
+  Brand: indigo primary on a cool neutral base. Green / amber / red are reserved
+  for meaning (income, warning, danger) so the brand colour never competes with
+  them. Every text/background pair below was checked against WCAG AA (4.5:1).
+  Components use the semantic utilities (bg-card, text-ink, bg-primary, ...), so
+  dark mode is only a different set of values.
+*/
 :root {
   color-scheme: light;
-  --c-bg: #fff5e6;
+  --c-bg: #f4f5fa;
   --c-card: #ffffff;
-  --c-ink: #111827;
-  --c-muted: #6b7280;
-  --c-primary: #fad4c0;
-  --c-primary-hover: #f5c0a7;
-  --c-on-primary: #111827;
-  --c-accent: #80a1c1;
-  --c-success: #16a34a;
-  --c-warning: #f59e0b;
-  --c-danger: #dc2626;
+  --c-ink: #0f172a;
+  --c-muted: #556078;
+  --c-primary: #4f46e5;
+  --c-primary-hover: #4338ca;
+  --c-on-primary: #ffffff;
+  --c-accent: #0369a1;
+  --c-success: #15803d;
+  --c-warning: #b45309;
+  --c-danger: #b91c1c;
+  --c-hero-from: #4f46e5;
+  --c-hero-to: #6d28d9;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 1px 3px rgb(15 23 42 / 0.04);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --c-bg: #0b1220;
-  --c-card: #162032;
-  --c-ink: #f1f5f9;
-  --c-muted: #94a3b8;
-  --c-primary: #e8a88a;
-  --c-primary-hover: #f0b89d;
-  --c-on-primary: #111827;
-  --c-accent: #8fb0d1;
-  --c-success: #22c55e;
+  --c-bg: #0b1020;
+  --c-card: #131b30;
+  --c-ink: #e8ecf4;
+  --c-muted: #9aa6bc;
+  --c-primary: #8b93ff;
+  --c-primary-hover: #a3a9ff;
+  --c-on-primary: #0b1020;
+  --c-accent: #38bdf8;
+  --c-success: #4ade80;
   --c-warning: #fbbf24;
   --c-danger: #f87171;
+  --c-hero-from: #3730a3;
+  --c-hero-to: #5b21b6;
+  --shadow-card: none;
 }
 
 @theme inline {
@@ -44,6 +57,9 @@
   --color-success: var(--c-success);
   --color-warning: var(--c-warning);
   --color-danger: var(--c-danger);
+  --color-hero-from: var(--c-hero-from);
+  --color-hero-to: var(--c-hero-to);
+  --shadow-xs: var(--shadow-card);
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
@@ -59,6 +75,21 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--c-primary) 30%, transparent);
+}
+
+/* One consistent, visible keyboard focus ring for every control. */
+:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 2px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
 }
 
 .scrollbar-none {
