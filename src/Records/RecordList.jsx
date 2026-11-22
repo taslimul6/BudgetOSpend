@@ -96,6 +96,7 @@ const RecordList = () => {
           <h2 className="text-lg font-bold text-ink">Transactions &amp; Records</h2>
           <span
             id="filteredCountNotice"
+            role="status"
             className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent/20 text-ink"
           >
             {filteredExpenses.length} Records
