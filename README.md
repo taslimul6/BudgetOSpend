@@ -28,7 +28,7 @@ A clean, responsive expense and budget tracker with a bento-grid dashboard, buil
 
 ## Getting Started
 
-Requires Node.js 18+.
+Requires Node.js 22.12 or newer (Vite 8 and Vitest 5 do not support older versions).
 
 ```bash
 git clone https://github.com/taslimul6/budgetospend.git
