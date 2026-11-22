@@ -29,7 +29,7 @@ A clean, responsive expense and budget tracker with a bento-grid dashboard, buil
 Requires Node.js 18+.
 
 ```bash
-git clone https://github.com/<your-username>/budgetospend.git
+git clone https://github.com/taslimul6/budgetospend.git
 cd budgetospend
 npm install
 npm run dev
