@@ -4,6 +4,8 @@ A clean, responsive expense and budget tracker with a bento-grid dashboard, buil
 
 **[Live demo → budgetospend.vercel.app](https://budgetospend.vercel.app/)**
 
+[![CI](https://github.com/taslimul6/BudgetOSpend/actions/workflows/ci.yml/badge.svg)](https://github.com/taslimul6/BudgetOSpend/actions/workflows/ci.yml)
+
 ![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
